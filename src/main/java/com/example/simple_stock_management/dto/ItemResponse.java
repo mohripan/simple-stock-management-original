@@ -9,12 +9,12 @@ public class ItemResponse {
     private String name;
     private Double price;
     private Integer remainingStock;
-    private List<OrderResponse> orderHistory;
+    private List<CustomerOrderResponse> orderHistory;
 
     public ItemResponse() {
     }
 
-    public ItemResponse(Integer itemId, String name, Double price, Integer remainingStock, List<OrderResponse> orderHistory) {
+    public ItemResponse(Integer itemId, String name, Double price, Integer remainingStock, List<CustomerOrderResponse> orderHistory) {
         this.itemId = itemId;
         this.name = name;
         this.price = price;
@@ -60,11 +60,11 @@ public class ItemResponse {
         this.remainingStock = remainingStock;
     }
 
-    public List<OrderResponse> getOrderHistory() {
+    public List<CustomerOrderResponse> getOrderHistory() {
         return orderHistory;
     }
 
-    public void setOrderHistory(List<OrderResponse> orderHistory) {
+    public void setOrderHistory(List<CustomerOrderResponse> orderHistory) {
         this.orderHistory = orderHistory;
     }
 

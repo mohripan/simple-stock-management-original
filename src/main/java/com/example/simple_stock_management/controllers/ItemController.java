@@ -62,4 +62,22 @@ public class ItemController {
 
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping
+    public ResponseEntity<Item> createItem(@RequestBody Item item) {
+        Item savedItem = itemService.saveItem(item);
+        return ResponseEntity.ok(savedItem);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Item> updateItem(@PathVariable Integer id, @RequestBody Item itemDetails) {
+        Item updatedItem = itemService.updateItem(id, itemDetails);
+        return ResponseEntity.ok(updatedItem);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteItem(@PathVariable Integer id) {
+        itemService.deleteItem(id);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -1,13 +1,13 @@
 package com.example.simple_stock_management.dto;
 
-public class OrderResponse {
+public class CustomerOrderResponse {
     private String orderNo;
     private Integer quantity;
 
-    public OrderResponse() {
+    public CustomerOrderResponse() {
     }
 
-    public OrderResponse(String orderNo, Integer quantity) {
+    public CustomerOrderResponse(String orderNo, Integer quantity) {
         this.orderNo = orderNo;
         this.quantity = quantity;
     }

@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface InventoryRepository extends JpaRepository<Inventory, InventoryKey> {
     List<Inventory> findByIdItemId(Integer itemId);
+    void deleteById(Integer itemId);
 }

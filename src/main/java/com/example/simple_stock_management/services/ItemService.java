@@ -1,11 +1,12 @@
 package com.example.simple_stock_management.services;
 
-import com.example.simple_stock_management.dto.OrderResponse;
+import com.example.simple_stock_management.dto.CustomerOrderResponse;
 import com.example.simple_stock_management.model.Inventory;
 import com.example.simple_stock_management.model.Item;
 import com.example.simple_stock_management.repository.InventoryRepository;
 import com.example.simple_stock_management.repository.ItemRepository;
-import com.example.simple_stock_management.repository.OrderRepository;
+import com.example.simple_stock_management.repository.CustomerOrderRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +21,7 @@ public class ItemService {
     @Autowired
     private InventoryRepository inventoryRepository;
     @Autowired
-    private OrderRepository orderRepository;
+    private CustomerOrderRepository customerOrderRepository;
 
     public Page<Item> getItems(Pageable pageable) {
         return itemRepository.findAll(pageable);
@@ -37,7 +38,24 @@ public class ItemService {
         return topup - withdrawal;
     }
 
-    public List<OrderResponse> getOrderHistory(Integer itemId) {
-        return orderRepository.findByItemId(itemId);
+    public List<CustomerOrderResponse> getOrderHistory(Integer itemId) {
+        return customerOrderRepository.findByItemId(itemId);
+    }
+
+    public Item saveItem(Item item) {
+        return itemRepository.save(item);
+    }
+
+    public Item updateItem(Integer id, Item itemDetails) {
+        Item item = getItemById(id);
+        item.setName(itemDetails.getName());
+        item.setPrice(itemDetails.getPrice());
+        return itemRepository.save(item);
+    }
+
+    @Transactional
+    public void deleteItem(Integer id) {
+        Item item = getItemById(id);
+
     }
 }
