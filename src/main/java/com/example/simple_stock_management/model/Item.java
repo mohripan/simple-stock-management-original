@@ -2,6 +2,8 @@ package com.example.simple_stock_management.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 public class Item {
     @Id
@@ -9,14 +11,17 @@ public class Item {
     private Long id;
     private String name;
     private Double price;
+    @OneToMany(mappedBy = "item")
+    private List<Order> orders;
 
     public Item() {
     }
 
-    public Item(Long id, String name, Double price) {
+    public Item(Long id, String name, Double price, List<Order> orders) {
         this.id = id;
         this.name = name;
         this.price = price;
+        this.orders = orders;
     }
 
     public Long getId() {
@@ -43,12 +48,21 @@ public class Item {
         this.price = price;
     }
 
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
     @Override
     public String toString() {
         return "Item{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", price=" + price +
+                ", orders=" + orders +
                 '}';
     }
 }
