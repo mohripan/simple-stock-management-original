@@ -3,7 +3,6 @@ package com.example.simple_stock_management.services;
 import com.example.simple_stock_management.dto.OrderResponse;
 import com.example.simple_stock_management.model.Inventory;
 import com.example.simple_stock_management.model.Item;
-import com.example.simple_stock_management.model.Order;
 import com.example.simple_stock_management.repository.InventoryRepository;
 import com.example.simple_stock_management.repository.ItemRepository;
 import com.example.simple_stock_management.repository.OrderRepository;

@@ -3,7 +3,8 @@ package com.example.simple_stock_management.model;
 import jakarta.persistence.*;
 
 @Entity
-public class Order {
+@Table(name = "customer_order")
+public class CustomerOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer orderNo;
@@ -14,10 +15,10 @@ public class Order {
 
     private Integer qyt;
 
-    public Order() {
+    public CustomerOrder() {
     }
 
-    public Order(Integer orderNo, Item item, Integer qyt) {
+    public CustomerOrder(Integer orderNo, Item item, Integer qyt) {
         this.orderNo = orderNo;
         this.item = item;
         this.qyt = qyt;

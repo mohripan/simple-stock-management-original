@@ -12,16 +12,16 @@ public class Item {
     private String name;
     private Double price;
     @OneToMany(mappedBy = "item")
-    private List<Order> orders;
+    private List<CustomerOrder> customerOrders;
 
     public Item() {
     }
 
-    public Item(Integer id, String name, Double price, List<Order> orders) {
+    public Item(Integer id, String name, Double price, List<CustomerOrder> customerOrders) {
         this.id = id;
         this.name = name;
         this.price = price;
-        this.orders = orders;
+        this.customerOrders = customerOrders;
     }
 
     public Integer getId() {
@@ -48,12 +48,12 @@ public class Item {
         this.price = price;
     }
 
-    public List<Order> getOrders() {
-        return orders;
+    public List<CustomerOrder> getOrders() {
+        return customerOrders;
     }
 
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
+    public void setOrders(List<CustomerOrder> customerOrders) {
+        this.customerOrders = customerOrders;
     }
 
     @Override
@@ -62,7 +62,7 @@ public class Item {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", price=" + price +
-                ", orders=" + orders +
+                ", orders=" + customerOrders +
                 '}';
     }
 }
