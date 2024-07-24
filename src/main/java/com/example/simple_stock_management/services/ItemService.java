@@ -27,18 +27,18 @@ public class ItemService {
         return itemRepository.findAll(pageable);
     }
 
-    public Item getItemById(Long id) {
+    public Item getItemById(Integer id) {
         return itemRepository.findById(id).orElseThrow(() -> new RuntimeException("Item not found"));
     }
 
-    public Integer getRemainingStock(Long itemId) {
+    public Integer getRemainingStock(Integer itemId) {
         List<Inventory> inventories = inventoryRepository.findByIdItemId(itemId);
         int topup = inventories.stream().filter(i -> i.getId().getType().equals("T")).mapToInt(Inventory::getQyt).sum();
         int withdrawal = inventories.stream().filter(i -> i.getId().getType().equals("W")).mapToInt(Inventory::getQyt).sum();
         return topup - withdrawal;
     }
 
-    public List<OrderResponse> getOrderHistory(Long itemId) {
+    public List<OrderResponse> getOrderHistory(Integer itemId) {
         return orderRepository.findByItemId(itemId);
     }
 }

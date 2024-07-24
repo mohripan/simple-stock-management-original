@@ -46,7 +46,7 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getItemById(@PathVariable Long id,
+    public ResponseEntity<?> getItemById(@PathVariable Integer id,
                                          @RequestParam(required = false) Boolean includeStock,
                                          @RequestParam(required = false) Boolean includeOrderHistory) {
         Item item = itemService.getItemById(id);

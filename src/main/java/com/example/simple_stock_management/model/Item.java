@@ -8,7 +8,7 @@ import java.util.List;
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
     private String name;
     private Double price;
     @OneToMany(mappedBy = "item")
@@ -17,18 +17,18 @@ public class Item {
     public Item() {
     }
 
-    public Item(Long id, String name, Double price, List<Order> orders) {
+    public Item(Integer id, String name, Double price, List<Order> orders) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.orders = orders;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

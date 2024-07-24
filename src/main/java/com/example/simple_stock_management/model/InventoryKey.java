@@ -7,7 +7,7 @@ import java.io.Serializable;
 @Embeddable
 public class InventoryKey implements Serializable {
     @Column(name = "item_id")
-    private Long itemId;
+    private Integer itemId;
 
     @Column(name = "type")
     private String type;
@@ -15,16 +15,16 @@ public class InventoryKey implements Serializable {
     public InventoryKey() {
     }
 
-    public InventoryKey(Long itemId, String type) {
+    public InventoryKey(Integer itemId, String type) {
         this.itemId = itemId;
         this.type = type;
     }
 
-    public Long getItemId() {
+    public Integer getItemId() {
         return itemId;
     }
 
-    public void setItemId(Long itemId) {
+    public void setItemId(Integer itemId) {
         this.itemId = itemId;
     }
 

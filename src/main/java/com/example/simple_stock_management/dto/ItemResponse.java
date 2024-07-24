@@ -5,7 +5,7 @@ import com.example.simple_stock_management.model.Item;
 import java.util.List;
 
 public class ItemResponse {
-    private Long itemId;
+    private Integer itemId;
     private String name;
     private Double price;
     private Integer remainingStock;
@@ -14,7 +14,7 @@ public class ItemResponse {
     public ItemResponse() {
     }
 
-    public ItemResponse(Long itemId, String name, Double price, Integer remainingStock, List<OrderResponse> orderHistory) {
+    public ItemResponse(Integer itemId, String name, Double price, Integer remainingStock, List<OrderResponse> orderHistory) {
         this.itemId = itemId;
         this.name = name;
         this.price = price;
@@ -28,11 +28,11 @@ public class ItemResponse {
         this.price = item.getPrice();
     }
 
-    public Long getItemId() {
+    public Integer getItemId() {
         return itemId;
     }
 
-    public void setItemId(Long itemId) {
+    public void setItemId(Integer itemId) {
         this.itemId = itemId;
     }
 
