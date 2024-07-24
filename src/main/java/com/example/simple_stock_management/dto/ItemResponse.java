@@ -1,5 +1,7 @@
 package com.example.simple_stock_management.dto;
 
+import com.example.simple_stock_management.model.Item;
+
 import java.util.List;
 
 public class ItemResponse {
@@ -18,6 +20,12 @@ public class ItemResponse {
         this.price = price;
         this.remainingStock = remainingStock;
         this.orderHistory = orderHistory;
+    }
+
+    public ItemResponse(Item item) {
+        this.itemId = item.getId();
+        this.name = item.getName();
+        this.price = item.getPrice();
     }
 
     public Long getItemId() {
