@@ -1,5 +1,6 @@
 package com.example.simple_stock_management.services;
 
+import com.example.simple_stock_management.dto.OrderResponse;
 import com.example.simple_stock_management.model.Inventory;
 import com.example.simple_stock_management.model.Item;
 import com.example.simple_stock_management.model.Order;
@@ -37,7 +38,7 @@ public class ItemService {
         return topup - withdrawal;
     }
 
-    public List<Order> getOrderHistory(Long itemId) {
+    public List<OrderResponse> getOrderHistory(Long itemId) {
         return orderRepository.findByItemId(itemId);
     }
 }

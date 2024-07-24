@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,6 +41,24 @@ public class ItemController {
                 pageable.getPageNumber(),
                 itemResponses
         );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getItemById(@PathVariable Long id,
+                                         @RequestParam(required = false) Boolean includeStock,
+                                         @RequestParam(required = false) Boolean includeOrderHistory) {
+        Item item = itemService.getItemById(id);
+        ItemResponse response = new ItemResponse(item);
+
+        if (includeStock != null && includeStock) {
+            response.setRemainingStock(itemService.getRemainingStock(id));
+        }
+
+        if (includeOrderHistory != null && includeOrderHistory) {
+            response.setOrderHistory(itemService.getOrderHistory(id));
+        }
 
         return ResponseEntity.ok(response);
     }
