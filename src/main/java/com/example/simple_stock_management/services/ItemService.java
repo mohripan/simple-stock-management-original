@@ -23,6 +23,15 @@ public class ItemService {
     @Autowired
     private CustomerOrderRepository customerOrderRepository;
 
+    public ItemService() {
+    }
+
+    public ItemService(ItemRepository itemRepository, InventoryRepository inventoryRepository, CustomerOrderRepository customerOrderRepository) {
+        this.itemRepository = itemRepository;
+        this.inventoryRepository = inventoryRepository;
+        this.customerOrderRepository = customerOrderRepository;
+    }
+
     public Page<Item> getItems(Pageable pageable) {
         return itemRepository.findAll(pageable);
     }
@@ -57,5 +66,9 @@ public class ItemService {
     public void deleteItem(Integer id) {
         Item item = getItemById(id);
 
+        customerOrderRepository.deleteByItemId(id);
+        inventoryRepository.deleteByItemId(id);
+
+        itemRepository.delete(item);
     }
 }
