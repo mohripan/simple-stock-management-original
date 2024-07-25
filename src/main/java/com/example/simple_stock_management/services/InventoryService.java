@@ -1,6 +1,9 @@
 package com.example.simple_stock_management.services;
 
+import com.example.simple_stock_management.dto.response.InventoryGroupedResponse;
+import com.example.simple_stock_management.dto.response.InventoryTypeResponse;
 import com.example.simple_stock_management.exception.InsufficientStockException;
+import com.example.simple_stock_management.exception.ResourceNotFoundException;
 import com.example.simple_stock_management.model.Inventory;
 import com.example.simple_stock_management.model.InventoryKey;
 import com.example.simple_stock_management.repository.InventoryRepository;
@@ -12,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class InventoryService {
@@ -32,7 +36,7 @@ public class InventoryService {
     @Transactional
     public Inventory saveInventory(Inventory inventory) {
         if (!itemRepository.existsById(inventory.getId().getItemId())) {
-            throw new RuntimeException("Item not found with id " + inventory.getId().getItemId());
+            throw new ResourceNotFoundException("Item not found with id " + inventory.getId().getItemId());
         }
 
         Inventory existingInventory = inventoryRepository.findById(inventory.getId()).orElse(null);
@@ -54,7 +58,12 @@ public class InventoryService {
     @Transactional
     public Inventory updateInventory(Inventory inventory) {
         if (!itemRepository.existsById(inventory.getId().getItemId())) {
-            throw new RuntimeException("Item not found with id " + inventory.getId().getItemId());
+            throw new ResourceNotFoundException("Item not found with id " + inventory.getId().getItemId());
+        }
+
+        Inventory existingInventory = inventoryRepository.findById(inventory.getId()).orElse(null);
+        if (existingInventory == null) {
+            throw new ResourceNotFoundException("Item with id " + inventory.getId().getItemId() + " hasn't been registered");
         }
 
         validateWithdrawal(inventory.getId().getItemId(), inventory.getQty());
@@ -71,8 +80,12 @@ public class InventoryService {
     }
 
     @Transactional
-    public void deleteInventory(InventoryKey id) {
-        inventoryRepository.deleteById(id);
+    public void deleteInventoryByItemId(Integer itemId) {
+        if (!inventoryRepository.existsById(new InventoryKey(itemId, "T")) &&
+                !inventoryRepository.existsById(new InventoryKey(itemId, "W"))) {
+            throw new ResourceNotFoundException("Item with id " + itemId + " not found");
+        }
+        inventoryRepository.deleteByIdItemId(itemId);
     }
 
     public Integer calculateRemainingStock(Integer itemId) {
@@ -82,9 +95,15 @@ public class InventoryService {
         return topUp - withdrawal;
     }
 
-    @Transactional
-    public void deleteInventoriesByItemId(Integer itemId) {
-        inventoryRepository.deleteByIdItemId(itemId);
+    public InventoryGroupedResponse getInventoryByItemId(Integer itemId) {
+        List<Inventory> inventories = inventoryRepository.findByIdItemId(itemId);
+        if (inventories.isEmpty()) {
+            throw new ResourceNotFoundException("Item with id " + itemId + " hasn't been registered");
+        }
+        Integer remainingStock = calculateRemainingStock(itemId);
+        List<InventoryTypeResponse> types = inventories.stream()
+                .map(inventory -> new InventoryTypeResponse(inventory.getId().getType(), inventory.getQty()))
+                .collect(Collectors.toList());
+        return new InventoryGroupedResponse(itemId, remainingStock, types);
     }
 }
-

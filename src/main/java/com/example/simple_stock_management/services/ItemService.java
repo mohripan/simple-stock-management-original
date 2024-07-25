@@ -2,7 +2,7 @@ package com.example.simple_stock_management.services;
 
 import com.example.simple_stock_management.dto.response.CustomerOrderResponse;
 import com.example.simple_stock_management.dto.response.ItemResponse;
-import com.example.simple_stock_management.exception.ItemNotFoundException;
+import com.example.simple_stock_management.exception.ResourceNotFoundException;
 import com.example.simple_stock_management.model.CustomerOrder;
 import com.example.simple_stock_management.model.Inventory;
 import com.example.simple_stock_management.model.Item;
@@ -41,7 +41,7 @@ public class ItemService {
     }
 
     public Item getItemById(Integer id) {
-        return itemRepository.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found with id " + id));
+        return itemRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Item not found with id " + id));
     }
 
     public ItemResponse getItemResponseById(Integer id, Boolean includeStock, Boolean includeOrderHistory) {
