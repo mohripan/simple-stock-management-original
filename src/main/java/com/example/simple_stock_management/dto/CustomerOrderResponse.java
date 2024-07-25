@@ -1,10 +1,17 @@
 package com.example.simple_stock_management.dto;
 
+import com.example.simple_stock_management.model.CustomerOrder;
+
 public class CustomerOrderResponse {
     private String orderNo;
     private Integer quantity;
 
     public CustomerOrderResponse() {
+    }
+
+    public CustomerOrderResponse(CustomerOrder order) {
+        this.orderNo = order.getOrderNo().toString();
+        this.quantity = order.getQyt();
     }
 
     public CustomerOrderResponse(String orderNo, Integer quantity) {

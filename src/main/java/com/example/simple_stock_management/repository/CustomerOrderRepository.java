@@ -10,7 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface CustomerOrderRepository extends JpaRepository<CustomerOrder, Integer> {
-    List<CustomerOrder> findOrderResponsesByItemId(Integer itemId);
+    List<CustomerOrder> findByItemId(Integer itemId);
+
     @Transactional
     @Modifying
     @Query("DELETE FROM CustomerOrder o WHERE o.item.id = :itemId")

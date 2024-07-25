@@ -2,6 +2,7 @@ package com.example.simple_stock_management.dto;
 
 import com.example.simple_stock_management.model.CustomerOrder;
 import com.example.simple_stock_management.model.Item;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ public class ItemResponse {
     private String name;
     private Double price;
     private Integer remainingStock;
-    private List<CustomerOrder> orderHistory;
+    private List<CustomerOrderResponse> orderHistory;
 
     public ItemResponse() {
     }
@@ -28,7 +29,7 @@ public class ItemResponse {
         this.remainingStock = remainingStock;
     }
 
-    public ItemResponse(Integer itemId, String name, Double price, Integer remainingStock, List<CustomerOrder> orderHistory) {
+    public ItemResponse(Integer itemId, String name, Double price, Integer remainingStock, List<CustomerOrderResponse> orderHistory) {
         this.itemId = itemId;
         this.name = name;
         this.price = price;
@@ -66,6 +67,7 @@ public class ItemResponse {
         this.price = price;
     }
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public Integer getRemainingStock() {
         return remainingStock;
     }
@@ -74,11 +76,12 @@ public class ItemResponse {
         this.remainingStock = remainingStock;
     }
 
-    public List<CustomerOrder> getOrderHistory() {
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public List<CustomerOrderResponse> getOrderHistory() {
         return orderHistory;
     }
 
-    public void setOrderHistory(List<CustomerOrder> orderHistory) {
+    public void setOrderHistory(List<CustomerOrderResponse> orderHistory) {
         this.orderHistory = orderHistory;
     }
 

@@ -1,6 +1,7 @@
 package com.example.simple_stock_management.services;
 
 import com.example.simple_stock_management.dto.CustomerOrderResponse;
+import com.example.simple_stock_management.dto.ItemResponse;
 import com.example.simple_stock_management.exception.ItemNotFoundException;
 import com.example.simple_stock_management.model.CustomerOrder;
 import com.example.simple_stock_management.model.Inventory;
@@ -35,12 +36,29 @@ public class ItemService {
         this.customerOrderRepository = customerOrderRepository;
     }
 
-    public Page<Item> getItems(Pageable pageable) {
-        return itemRepository.findAll(pageable);
+    public Page<Item> getItems(Pageable pageable, String name, Double minPrice, Double maxPrice) {
+        return itemRepository.findByNameAndPriceRange(name, minPrice, maxPrice, pageable);
     }
 
     public Item getItemById(Integer id) {
         return itemRepository.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found with id " + id));
+    }
+
+    public ItemResponse getItemResponseById(Integer id, Boolean includeStock, Boolean includeOrderHistory) {
+        Item item = getItemById(id);
+        ItemResponse response = new ItemResponse(item);
+
+        if (includeStock != null && includeStock) {
+            response.setRemainingStock(getRemainingStock(id));
+        }
+
+        if (includeOrderHistory != null && includeOrderHistory) {
+            response.setOrderHistory(getOrderHistory(id).stream()
+                    .map(order -> new CustomerOrderResponse(order))
+                    .collect(Collectors.toList()));
+        }
+
+        return response;
     }
 
     public Integer getRemainingStock(Integer itemId) {
@@ -51,7 +69,7 @@ public class ItemService {
     }
 
     public List<CustomerOrder> getOrderHistory(Integer itemId) {
-        return customerOrderRepository.findOrderResponsesByItemId(itemId);
+        return customerOrderRepository.findByItemId(itemId);
     }
 
     public Item saveItem(Item item) {
