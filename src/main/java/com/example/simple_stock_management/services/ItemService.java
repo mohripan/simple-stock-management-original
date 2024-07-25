@@ -1,6 +1,7 @@
 package com.example.simple_stock_management.services;
 
 import com.example.simple_stock_management.dto.CustomerOrderResponse;
+import com.example.simple_stock_management.exception.ItemNotFoundException;
 import com.example.simple_stock_management.model.CustomerOrder;
 import com.example.simple_stock_management.model.Inventory;
 import com.example.simple_stock_management.model.Item;
@@ -39,7 +40,7 @@ public class ItemService {
     }
 
     public Item getItemById(Integer id) {
-        return itemRepository.findById(id).orElseThrow(() -> new RuntimeException("Item not found"));
+        return itemRepository.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found with id " + id));
     }
 
     public Integer getRemainingStock(Integer itemId) {
