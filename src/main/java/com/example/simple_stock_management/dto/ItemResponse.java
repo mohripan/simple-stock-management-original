@@ -1,5 +1,6 @@
 package com.example.simple_stock_management.dto;
 
+import com.example.simple_stock_management.model.CustomerOrder;
 import com.example.simple_stock_management.model.Item;
 
 import java.util.List;
@@ -9,12 +10,25 @@ public class ItemResponse {
     private String name;
     private Double price;
     private Integer remainingStock;
-    private List<CustomerOrderResponse> orderHistory;
+    private List<CustomerOrder> orderHistory;
 
     public ItemResponse() {
     }
 
-    public ItemResponse(Integer itemId, String name, Double price, Integer remainingStock, List<CustomerOrderResponse> orderHistory) {
+    public ItemResponse(Integer itemId, String name, Double price) {
+        this.itemId = itemId;
+        this.name = name;
+        this.price = price;
+    }
+
+    public ItemResponse(Integer itemId, String name, Double price, Integer remainingStock) {
+        this.itemId = itemId;
+        this.name = name;
+        this.price = price;
+        this.remainingStock = remainingStock;
+    }
+
+    public ItemResponse(Integer itemId, String name, Double price, Integer remainingStock, List<CustomerOrder> orderHistory) {
         this.itemId = itemId;
         this.name = name;
         this.price = price;
@@ -60,11 +74,11 @@ public class ItemResponse {
         this.remainingStock = remainingStock;
     }
 
-    public List<CustomerOrderResponse> getOrderHistory() {
+    public List<CustomerOrder> getOrderHistory() {
         return orderHistory;
     }
 
-    public void setOrderHistory(List<CustomerOrderResponse> orderHistory) {
+    public void setOrderHistory(List<CustomerOrder> orderHistory) {
         this.orderHistory = orderHistory;
     }
 

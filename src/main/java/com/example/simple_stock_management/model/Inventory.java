@@ -6,14 +6,14 @@ import jakarta.persistence.*;
 public class Inventory {
     @EmbeddedId
     private InventoryKey id;
-    private Integer qyt;
+    private Integer qty;
 
     public Inventory() {
     }
 
-    public Inventory(InventoryKey id, Integer qyt) {
+    public Inventory(InventoryKey id, Integer qty) {
         this.id = id;
-        this.qyt = qyt;
+        this.qty = qty;
     }
 
     public InventoryKey getId() {
@@ -24,19 +24,19 @@ public class Inventory {
         this.id = id;
     }
 
-    public Integer getQyt() {
-        return qyt;
+    public Integer getQty() {
+        return qty;
     }
 
-    public void setQyt(Integer qyt) {
-        this.qyt = qyt;
+    public void setQty(Integer qty) {
+        this.qty = qty;
     }
 
     @Override
     public String toString() {
         return "Inventory{" +
                 "id=" + id +
-                ", qyt=" + qyt +
+                ", qty=" + qty +
                 '}';
     }
 }

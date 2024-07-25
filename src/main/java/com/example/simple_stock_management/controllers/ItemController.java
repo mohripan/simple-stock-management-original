@@ -2,16 +2,21 @@ package com.example.simple_stock_management.controllers;
 
 
 import com.example.simple_stock_management.dto.ItemResponse;
+import com.example.simple_stock_management.dto.PaginationDetails;
 import com.example.simple_stock_management.dto.PaginationResponse;
 import com.example.simple_stock_management.model.Item;
 import com.example.simple_stock_management.services.ItemService;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -35,10 +40,12 @@ public class ItemController {
         }).collect(Collectors.toList());
 
         PaginationResponse<ItemResponse> response = new PaginationResponse<>(
-                items.getTotalElements(),
-                items.getTotalPages(),
-                pageable.getPageSize(),
-                pageable.getPageNumber(),
+                new PaginationDetails(
+                        items.getTotalElements(),
+                        items.getTotalPages(),
+                        pageable.getPageSize(),
+                        pageable.getPageNumber()
+                ),
                 itemResponses
         );
 

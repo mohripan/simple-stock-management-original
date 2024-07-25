@@ -1,6 +1,7 @@
 package com.example.simple_stock_management.services;
 
 import com.example.simple_stock_management.dto.CustomerOrderResponse;
+import com.example.simple_stock_management.model.CustomerOrder;
 import com.example.simple_stock_management.model.Inventory;
 import com.example.simple_stock_management.model.Item;
 import com.example.simple_stock_management.repository.InventoryRepository;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ItemService {
@@ -42,13 +44,13 @@ public class ItemService {
 
     public Integer getRemainingStock(Integer itemId) {
         List<Inventory> inventories = inventoryRepository.findByIdItemId(itemId);
-        int topup = inventories.stream().filter(i -> i.getId().getType().equals("T")).mapToInt(Inventory::getQyt).sum();
-        int withdrawal = inventories.stream().filter(i -> i.getId().getType().equals("W")).mapToInt(Inventory::getQyt).sum();
-        return topup - withdrawal;
+        int topUp = inventories.stream().filter(i -> i.getId().getType().equals("T")).mapToInt(Inventory::getQty).sum();
+        int withdrawal = inventories.stream().filter(i -> i.getId().getType().equals("W")).mapToInt(Inventory::getQty).sum();
+        return topUp - withdrawal;
     }
 
-    public List<CustomerOrderResponse> getOrderHistory(Integer itemId) {
-        return customerOrderRepository.findByItemId(itemId);
+    public List<CustomerOrder> getOrderHistory(Integer itemId) {
+        return customerOrderRepository.findOrderResponsesByItemId(itemId);
     }
 
     public Item saveItem(Item item) {
@@ -65,10 +67,8 @@ public class ItemService {
     @Transactional
     public void deleteItem(Integer id) {
         Item item = getItemById(id);
-
         customerOrderRepository.deleteByItemId(id);
         inventoryRepository.deleteByItemId(id);
-
         itemRepository.delete(item);
     }
 }
