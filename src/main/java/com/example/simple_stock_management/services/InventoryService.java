@@ -6,6 +6,7 @@ import com.example.simple_stock_management.exception.InsufficientStockException;
 import com.example.simple_stock_management.exception.ResourceNotFoundException;
 import com.example.simple_stock_management.model.Inventory;
 import com.example.simple_stock_management.model.InventoryKey;
+import com.example.simple_stock_management.model.Item;
 import com.example.simple_stock_management.repository.InventoryRepository;
 import com.example.simple_stock_management.repository.ItemRepository;
 import jakarta.transaction.Transactional;
@@ -25,6 +26,14 @@ public class InventoryService {
     @Autowired
     private ItemRepository itemRepository;
 
+    public InventoryService() {
+    }
+
+    public InventoryService(InventoryRepository inventoryRepository, ItemRepository itemRepository) {
+        this.inventoryRepository = inventoryRepository;
+        this.itemRepository = itemRepository;
+    }
+
     public Inventory getInventory(InventoryKey id) {
         return inventoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Inventory not found"));
     }
@@ -39,18 +48,20 @@ public class InventoryService {
             throw new ResourceNotFoundException("Item not found with id " + inventory.getId().getItemId());
         }
 
+        Item item = itemRepository.findById(inventory.getId().getItemId()).orElseThrow(() -> new ResourceNotFoundException("Item not found with id " + inventory.getId().getItemId()));
+
         Inventory existingInventory = inventoryRepository.findById(inventory.getId()).orElse(null);
         if (existingInventory != null) {
             if (inventory.getId().getType().equals("W")) {
                 validateWithdrawal(inventory.getId().getItemId(), inventory.getQty());
             }
             existingInventory.setQty(existingInventory.getQty() + inventory.getQty());
-            inventoryRepository.save(existingInventory);
-            return existingInventory;
+            return inventoryRepository.save(existingInventory);
         } else {
             if (inventory.getId().getType().equals("W")) {
                 validateWithdrawal(inventory.getId().getItemId(), inventory.getQty());
             }
+            inventory.setItem(item);
             return inventoryRepository.save(inventory);
         }
     }
@@ -66,8 +77,13 @@ public class InventoryService {
             throw new ResourceNotFoundException("Item with id " + inventory.getId().getItemId() + " hasn't been registered");
         }
 
-        validateWithdrawal(inventory.getId().getItemId(), inventory.getQty());
-        return inventoryRepository.save(inventory);
+        int qtyDifference = inventory.getQty() - existingInventory.getQty();
+        if (inventory.getId().getType().equals("W") && qtyDifference > 0) {
+            validateWithdrawal(inventory.getId().getItemId(), qtyDifference);
+        }
+
+        existingInventory.setQty(inventory.getQty());
+        return inventoryRepository.save(existingInventory);
     }
 
     private void validateWithdrawal(Integer itemId, Integer withdrawalQty) {
