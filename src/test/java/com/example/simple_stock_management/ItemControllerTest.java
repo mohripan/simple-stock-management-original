@@ -1,5 +1,6 @@
 package com.example.simple_stock_management;
 
+import com.example.simple_stock_management.dto.ItemResponse;
 import com.example.simple_stock_management.model.Item;
 import com.example.simple_stock_management.services.ItemService;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,7 +50,7 @@ public class ItemControllerTest {
     @Test
     public void testGetItems() throws Exception {
         Page<Item> items = new PageImpl<>(Arrays.asList(item), PageRequest.of(0, 10), 1);
-        when(itemService.getItems(any(Pageable.class))).thenReturn(items);
+        when(itemService.getItems(any(Pageable.class), eq(null), eq(null), eq(null))).thenReturn(items);
 
         mockMvc.perform(get("/items")
                         .param("page", "0")
@@ -60,8 +61,29 @@ public class ItemControllerTest {
     }
 
     @Test
+    public void testGetItemsWithFilter() throws Exception {
+        Item filteredItem = new Item();
+        filteredItem.setName("Pen");
+        filteredItem.setPrice(1.5);
+        Page<Item> items = new PageImpl<>(Arrays.asList(filteredItem), PageRequest.of(0, 10), 1);
+        when(itemService.getItems(any(Pageable.class), eq("Pen"), eq(1.0), eq(2.0))).thenReturn(items);
+
+        mockMvc.perform(get("/items")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .param("name", "Pen")
+                        .param("minPrice", "1")
+                        .param("maxPrice", "2")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.values[0].name").value("Pen"))
+                .andExpect(jsonPath("$.values[0].price").value(1.5));
+    }
+
+    @Test
     public void testGetItemById() throws Exception {
-        when(itemService.getItemById(1)).thenReturn(item);
+        ItemResponse itemResponse = new ItemResponse(item);
+        when(itemService.getItemResponseById(1, null, null)).thenReturn(itemResponse);
 
         mockMvc.perform(get("/items/1")
                         .accept(MediaType.APPLICATION_JSON))

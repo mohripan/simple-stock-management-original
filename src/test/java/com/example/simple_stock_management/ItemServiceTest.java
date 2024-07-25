@@ -38,13 +38,35 @@ public class ItemServiceTest {
 
     @Test
     public void testGetItems() {
-        Item item = new Item();
-        item.setName("Test Item");
-        item.setPrice(10.0);
-        entityManager.persistAndFlush(item);
+        Item item1 = new Item();
+        item1.setName("Test Item 1");
+        item1.setPrice(5.0);
+        entityManager.persistAndFlush(item1);
 
-        Page<Item> items = itemService.getItems(PageRequest.of(0, 10));
+        Item item2 = new Item();
+        item2.setName("Test Item 2");
+        item2.setPrice(15.0);
+        entityManager.persistAndFlush(item2);
+
+        Page<Item> items = itemService.getItems(PageRequest.of(0, 10), null, null, null);
+        assertEquals(2, items.getTotalElements());
+    }
+
+    @Test
+    public void testGetItemsWithFilter() {
+        Item item1 = new Item();
+        item1.setName("Pen");
+        item1.setPrice(1.5);
+        entityManager.persistAndFlush(item1);
+
+        Item item2 = new Item();
+        item2.setName("Notebook");
+        item2.setPrice(12.0);
+        entityManager.persistAndFlush(item2);
+
+        Page<Item> items = itemService.getItems(PageRequest.of(0, 10), "Pen", 1.0, 2.0);
         assertEquals(1, items.getTotalElements());
+        assertEquals("Pen", items.getContent().get(0).getName());
     }
 
     @Test
