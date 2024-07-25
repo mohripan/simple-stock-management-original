@@ -11,7 +11,7 @@ public class CustomerOrderResponse {
 
     public CustomerOrderResponse(CustomerOrder order) {
         this.orderNo = order.getOrderNo().toString();
-        this.quantity = order.getQyt();
+        this.quantity = order.getQty();
     }
 
     public CustomerOrderResponse(String orderNo, Integer quantity) {

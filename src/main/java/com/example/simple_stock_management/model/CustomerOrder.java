@@ -6,29 +6,28 @@ import jakarta.persistence.*;
 @Table(name = "customer_order")
 public class CustomerOrder {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer orderNo;
+    private String orderNo;
 
     @ManyToOne
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
-    private Integer qyt;
+    private Integer qty;
 
     public CustomerOrder() {
     }
 
-    public CustomerOrder(Integer orderNo, Item item, Integer qyt) {
+    public CustomerOrder(String orderNo, Item item, Integer qty) {
         this.orderNo = orderNo;
         this.item = item;
-        this.qyt = qyt;
+        this.qty = qty;
     }
 
-    public Integer getOrderNo() {
+    public String getOrderNo() {
         return orderNo;
     }
 
-    public void setOrderNo(Integer orderNo) {
+    public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
     }
 
@@ -40,20 +39,20 @@ public class CustomerOrder {
         this.item = item;
     }
 
-    public Integer getQyt() {
-        return qyt;
+    public Integer getQty() {
+        return qty;
     }
 
-    public void setQyt(Integer qyt) {
-        this.qyt = qyt;
+    public void setQty(Integer qty) {
+        this.qty = qty;
     }
 
     @Override
     public String toString() {
-        return "Order{" +
-                "orderNo=" + orderNo +
+        return "CustomerOrder{" +
+                "orderNo='" + orderNo + '\'' +
                 ", item=" + item +
-                ", qyt=" + qyt +
+                ", qty=" + qty +
                 '}';
     }
 }
