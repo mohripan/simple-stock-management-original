@@ -1,7 +1,7 @@
 package com.example.simple_stock_management.services;
 
-import com.example.simple_stock_management.dto.CustomerOrderResponse;
-import com.example.simple_stock_management.dto.ItemResponse;
+import com.example.simple_stock_management.dto.response.CustomerOrderResponse;
+import com.example.simple_stock_management.dto.response.ItemResponse;
 import com.example.simple_stock_management.exception.ItemNotFoundException;
 import com.example.simple_stock_management.model.CustomerOrder;
 import com.example.simple_stock_management.model.Inventory;
@@ -87,7 +87,7 @@ public class ItemService {
     public void deleteItem(Integer id) {
         Item item = getItemById(id);
         customerOrderRepository.deleteByItemId(id);
-        inventoryRepository.deleteByItemId(id);
+        inventoryRepository.deleteByIdItemId(id);
         itemRepository.delete(item);
     }
 }

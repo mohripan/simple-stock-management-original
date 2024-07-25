@@ -1,6 +1,5 @@
 package com.example.simple_stock_management.repository;
 
-import com.example.simple_stock_management.dto.CustomerOrderResponse;
 import com.example.simple_stock_management.model.CustomerOrder;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;

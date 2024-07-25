@@ -1,4 +1,4 @@
-package com.example.simple_stock_management.dto;
+package com.example.simple_stock_management.dto.detail;
 
 public class PaginationDetails {
     private long total;

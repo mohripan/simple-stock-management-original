@@ -14,5 +14,5 @@ public interface InventoryRepository extends JpaRepository<Inventory, InventoryK
     @Transactional
     @Modifying
     @Query("DELETE FROM Inventory i WHERE i.id.itemId = :itemId")
-    void deleteByItemId(Integer itemId);
+    void deleteByIdItemId(Integer itemId);
 }

@@ -1,10 +1,10 @@
 package com.example.simple_stock_management.controllers;
 
 
-import com.example.simple_stock_management.dto.CustomerOrderResponse;
-import com.example.simple_stock_management.dto.ItemResponse;
-import com.example.simple_stock_management.dto.PaginationDetails;
-import com.example.simple_stock_management.dto.PaginationResponse;
+import com.example.simple_stock_management.dto.response.CustomerOrderResponse;
+import com.example.simple_stock_management.dto.response.ItemResponse;
+import com.example.simple_stock_management.dto.detail.PaginationDetails;
+import com.example.simple_stock_management.dto.response.PaginationResponse;
 import com.example.simple_stock_management.model.Item;
 import com.example.simple_stock_management.services.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;

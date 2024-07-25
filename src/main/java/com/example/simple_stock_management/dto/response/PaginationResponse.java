@@ -1,4 +1,6 @@
-package com.example.simple_stock_management.dto;
+package com.example.simple_stock_management.dto.response;
+
+import com.example.simple_stock_management.dto.detail.PaginationDetails;
 
 import java.util.List;
 

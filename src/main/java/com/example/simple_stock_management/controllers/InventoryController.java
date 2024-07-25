@@ -1,8 +1,9 @@
 package com.example.simple_stock_management.controllers;
 
-import com.example.simple_stock_management.dto.InventoryResponse;
-import com.example.simple_stock_management.dto.PaginationDetails;
-import com.example.simple_stock_management.dto.PaginationResponse;
+import com.example.simple_stock_management.dto.request.InventoryRequest;
+import com.example.simple_stock_management.dto.response.InventoryResponse;
+import com.example.simple_stock_management.dto.detail.PaginationDetails;
+import com.example.simple_stock_management.dto.response.PaginationResponse;
 import com.example.simple_stock_management.model.Inventory;
 import com.example.simple_stock_management.model.InventoryKey;
 import com.example.simple_stock_management.services.InventoryService;
@@ -25,14 +26,15 @@ public class InventoryController {
     public ResponseEntity<?> getInventory(@PathVariable Integer itemId, @PathVariable String type) {
         InventoryKey id = new InventoryKey(itemId, type);
         Inventory inventory = inventoryService.getInventory(id);
-        return ResponseEntity.ok(new InventoryResponse(inventory));
+        Integer remainingStock = inventoryService.calculateRemainingStock(itemId);
+        return ResponseEntity.ok(new InventoryResponse(inventory, remainingStock));
     }
 
     @GetMapping
     public ResponseEntity<?> listInventories(Pageable pageable) {
         Page<Inventory> inventories = inventoryService.listInventories(pageable);
         List<InventoryResponse> inventoryResponses = inventories.getContent().stream()
-                .map(InventoryResponse::new)
+                .map(inventory -> new InventoryResponse(inventory, inventoryService.calculateRemainingStock(inventory.getId().getItemId())))
                 .collect(Collectors.toList());
         PaginationResponse<InventoryResponse> response = new PaginationResponse<>(
                 new PaginationDetails(
@@ -47,15 +49,21 @@ public class InventoryController {
     }
 
     @PostMapping
-    public ResponseEntity<?> saveInventory(@RequestBody Inventory inventory) {
+    public ResponseEntity<?> saveInventory(@RequestBody InventoryRequest inventoryRequest) {
+        InventoryKey id = new InventoryKey(inventoryRequest.getItemId(), inventoryRequest.getType());
+        Inventory inventory = new Inventory(id, inventoryRequest.getQty());
         Inventory savedInventory = inventoryService.saveInventory(inventory);
-        return ResponseEntity.ok(new InventoryResponse(savedInventory));
+        Integer remainingStock = inventoryService.calculateRemainingStock(inventoryRequest.getItemId());
+        return ResponseEntity.ok(new InventoryResponse(inventory, remainingStock));
     }
 
     @PutMapping
-    public ResponseEntity<?> updateInventory(@RequestBody Inventory inventory) {
+    public ResponseEntity<?> updateInventory(@RequestBody InventoryRequest inventoryRequest) {
+        InventoryKey id = new InventoryKey(inventoryRequest.getItemId(), inventoryRequest.getType());
+        Inventory inventory = new Inventory(id, inventoryRequest.getQty());
         Inventory updatedInventory = inventoryService.updateInventory(inventory);
-        return ResponseEntity.ok(new InventoryResponse(updatedInventory));
+        Integer remainingStock = inventoryService.calculateRemainingStock(inventoryRequest.getItemId());
+        return ResponseEntity.ok(new InventoryResponse(updatedInventory, remainingStock));
     }
 
     @DeleteMapping("/{itemId}/{type}")

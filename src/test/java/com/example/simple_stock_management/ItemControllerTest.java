@@ -1,6 +1,6 @@
 package com.example.simple_stock_management;
 
-import com.example.simple_stock_management.dto.ItemResponse;
+import com.example.simple_stock_management.dto.response.ItemResponse;
 import com.example.simple_stock_management.model.Item;
 import com.example.simple_stock_management.services.ItemService;
 import org.junit.jupiter.api.BeforeEach;

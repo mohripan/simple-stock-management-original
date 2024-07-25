@@ -4,6 +4,7 @@ import com.example.simple_stock_management.exception.InsufficientStockException;
 import com.example.simple_stock_management.model.Inventory;
 import com.example.simple_stock_management.model.InventoryKey;
 import com.example.simple_stock_management.repository.InventoryRepository;
+import com.example.simple_stock_management.repository.ItemRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,6 +18,9 @@ public class InventoryService {
     @Autowired
     private InventoryRepository inventoryRepository;
 
+    @Autowired
+    private ItemRepository itemRepository;
+
     public Inventory getInventory(InventoryKey id) {
         return inventoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Inventory not found"));
     }
@@ -27,13 +31,18 @@ public class InventoryService {
 
     @Transactional
     public Inventory saveInventory(Inventory inventory) {
+        if (!itemRepository.existsById(inventory.getId().getItemId())) {
+            throw new RuntimeException("Item not found with id " + inventory.getId().getItemId());
+        }
+
         Inventory existingInventory = inventoryRepository.findById(inventory.getId()).orElse(null);
         if (existingInventory != null) {
             if (inventory.getId().getType().equals("W")) {
                 validateWithdrawal(inventory.getId().getItemId(), inventory.getQty());
             }
             existingInventory.setQty(existingInventory.getQty() + inventory.getQty());
-            return inventoryRepository.save(existingInventory);
+            inventoryRepository.save(existingInventory);
+            return existingInventory;
         } else {
             if (inventory.getId().getType().equals("W")) {
                 validateWithdrawal(inventory.getId().getItemId(), inventory.getQty());
@@ -44,6 +53,10 @@ public class InventoryService {
 
     @Transactional
     public Inventory updateInventory(Inventory inventory) {
+        if (!itemRepository.existsById(inventory.getId().getItemId())) {
+            throw new RuntimeException("Item not found with id " + inventory.getId().getItemId());
+        }
+
         validateWithdrawal(inventory.getId().getItemId(), inventory.getQty());
         return inventoryRepository.save(inventory);
     }
@@ -60,6 +73,18 @@ public class InventoryService {
     @Transactional
     public void deleteInventory(InventoryKey id) {
         inventoryRepository.deleteById(id);
+    }
+
+    public Integer calculateRemainingStock(Integer itemId) {
+        List<Inventory> inventories = inventoryRepository.findByIdItemId(itemId);
+        int topUp = inventories.stream().filter(i -> i.getId().getType().equals("T")).mapToInt(Inventory::getQty).sum();
+        int withdrawal = inventories.stream().filter(i -> i.getId().getType().equals("W")).mapToInt(Inventory::getQty).sum();
+        return topUp - withdrawal;
+    }
+
+    @Transactional
+    public void deleteInventoriesByItemId(Integer itemId) {
+        inventoryRepository.deleteByIdItemId(itemId);
     }
 }
 
