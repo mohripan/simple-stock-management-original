@@ -86,7 +86,7 @@ public class InventoryControllerTest {
         when(inventoryService.calculateRemainingStock(1)).thenReturn(10);
 
         mockMvc.perform(get("/inventories")
-                        .param("page", "0")
+                        .param("page", "1")
                         .param("size", "10")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -94,7 +94,8 @@ public class InventoryControllerTest {
                 .andExpect(jsonPath("$.values[0].itemId").value(1))
                 .andExpect(jsonPath("$.values[0].remainingStock").value(10))
                 .andExpect(jsonPath("$.values[0].types[0].type").value("T"))
-                .andExpect(jsonPath("$.values[0].types[0].qty").value(10));
+                .andExpect(jsonPath("$.values[0].types[0].qty").value(10))
+                .andExpect(jsonPath("$.search.pageAt").value(1));
     }
 
     @Test

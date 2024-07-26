@@ -2,10 +2,7 @@ package com.example.simple_stock_management.services;
 
 import com.example.simple_stock_management.exception.InsufficientStockException;
 import com.example.simple_stock_management.exception.ResourceNotFoundException;
-import com.example.simple_stock_management.model.CustomerOrder;
-import com.example.simple_stock_management.model.Inventory;
-import com.example.simple_stock_management.model.InventoryKey;
-import com.example.simple_stock_management.model.OrderNumberCounter;
+import com.example.simple_stock_management.model.*;
 import com.example.simple_stock_management.repository.CustomerOrderRepository;
 import com.example.simple_stock_management.repository.InventoryRepository;
 import com.example.simple_stock_management.repository.ItemRepository;
@@ -45,6 +42,10 @@ public class OrderService {
 
     @Transactional
     public CustomerOrder saveOrder(CustomerOrder order) {
+        Item item = itemRepository.findById(order.getItem().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found with id " + order.getItem().getId()));
+        order.setItem(item);
+
         validateOrder(order);
 
         order.setOrderNo(generateOrderNumber());
@@ -65,30 +66,30 @@ public class OrderService {
     }
 
     @Transactional
-    public CustomerOrder updateOrder(String orderNo, CustomerOrder updatedOrder) {
-        validateOrder(updatedOrder);
+    public CustomerOrder updateOrder(String orderNo, Integer qty) {
+        if (qty < 1) {
+            throw new IllegalArgumentException("Quantity must be greater than 0");
+        }
 
         CustomerOrder existingOrder = customerOrderRepository.findById(orderNo)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with orderNo " + orderNo));
 
         int qtyBefore = existingOrder.getQty();
-        int qtyAfter = updatedOrder.getQty();
-        int qtyDifference = qtyAfter - qtyBefore;
+        int qtyDifference = qty - qtyBefore;
 
         if (qtyDifference > 0) {
-            int remainingStock = calculateRemainingStock(updatedOrder.getItem().getId());
+            int remainingStock = calculateRemainingStock(existingOrder.getItem().getId());
             if (remainingStock < qtyDifference) {
                 throw new InsufficientStockException("Item stock is insufficient");
             }
         }
 
-        existingOrder.setQty(updatedOrder.getQty());
-        existingOrder.setItem(updatedOrder.getItem());
+        existingOrder.setQty(qty);
         CustomerOrder savedOrder = customerOrderRepository.save(existingOrder);
 
-        InventoryKey inventoryKey = new InventoryKey(updatedOrder.getItem().getId(), "W");
+        InventoryKey inventoryKey = new InventoryKey(existingOrder.getItem().getId(), "W");
         Inventory inventory = inventoryRepository.findById(inventoryKey)
-                .orElseThrow(() -> new ResourceNotFoundException("Inventory not found with itemId " + updatedOrder.getItem().getId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Inventory not found with itemId " + existingOrder.getItem().getId()));
         inventory.setQty(inventory.getQty() + qtyDifference);
         inventoryRepository.save(inventory);
 
@@ -139,9 +140,6 @@ public class OrderService {
         InventoryKey inventoryKey = new InventoryKey(existingOrder.getItem().getId(), "W");
         Inventory inventory = inventoryRepository.findById(inventoryKey)
                 .orElseThrow(() -> new ResourceNotFoundException("Inventory not found with itemId " + existingOrder.getItem().getId()));
-
-        inventory.setQty(inventory.getQty() - existingOrder.getQty());
-        inventoryRepository.save(inventory);
 
         customerOrderRepository.delete(existingOrder);
     }

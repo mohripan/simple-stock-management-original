@@ -5,14 +5,17 @@ import com.example.simple_stock_management.dto.response.CustomerOrderResponse;
 import com.example.simple_stock_management.dto.response.OrderResponse;
 import com.example.simple_stock_management.dto.response.PaginationResponse;
 import com.example.simple_stock_management.model.CustomerOrder;
+import com.example.simple_stock_management.model.Item;
 import com.example.simple_stock_management.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -22,19 +25,32 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<?> saveOrder(@RequestBody CustomerOrder order) {
+    public ResponseEntity<?> saveOrder(@RequestBody Map<String, Object> orderRequest) {
+        Integer itemId = (Integer) orderRequest.get("itemId");
+        Integer qty = (Integer) orderRequest.get("qty");
+
+        CustomerOrder order = new CustomerOrder();
+        order.setItem(new Item());
+        order.getItem().setId(itemId);
+        order.setQty(qty);
+
         CustomerOrder savedOrder = orderService.saveOrder(order);
         return ResponseEntity.ok(new OrderResponse(savedOrder));
     }
 
     @PutMapping("/{orderNo}")
-    public ResponseEntity<?> updateOrder(@PathVariable String orderNo, @RequestBody CustomerOrder order) {
-        CustomerOrder updatedOrder = orderService.updateOrder(orderNo, order);
+    public ResponseEntity<?> updateOrder(@PathVariable String orderNo, @RequestBody Map<String, Object> orderRequest) {
+        Integer qty = (Integer) orderRequest.get("qty");
+
+        CustomerOrder updatedOrder = orderService.updateOrder(orderNo, qty);
         return ResponseEntity.ok(new OrderResponse(updatedOrder));
     }
 
     @GetMapping
-    public ResponseEntity<?> listOrders(Pageable pageable, @RequestParam(required = false) Integer itemId) {
+    public ResponseEntity<?> listOrders(@RequestParam(defaultValue = "1") int page,
+                                        @RequestParam(defaultValue = "10") int size,
+                                        @RequestParam(required = false) Integer itemId) {
+        Pageable pageable = PageRequest.of(page - 1, size);
         Page<CustomerOrder> orders = orderService.listOrders(pageable, itemId);
         List<OrderResponse> orderResponses = orders.getContent().stream()
                 .map(OrderResponse::new)
@@ -45,7 +61,7 @@ public class OrderController {
                         orders.getTotalElements(),
                         orders.getTotalPages(),
                         pageable.getPageSize(),
-                        pageable.getPageNumber()
+                        pageable.getPageNumber() + 1
                 ),
                 orderResponses
         );

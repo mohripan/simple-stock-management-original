@@ -15,6 +15,7 @@ import com.example.simple_stock_management.services.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +38,9 @@ public class InventoryController {
     }
 
     @GetMapping
-    public ResponseEntity<?> listInventories(Pageable pageable) {
+    public ResponseEntity<?> listInventories(@RequestParam(defaultValue = "1") int page,
+                                             @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
         Page<Inventory> inventories = inventoryService.listInventories(pageable);
 
         List<InventoryGroupedResponse> groupedResponses = inventories.getContent().stream()
@@ -61,7 +64,7 @@ public class InventoryController {
                         responsePage.getTotalElements(),
                         responsePage.getTotalPages(),
                         pageable.getPageSize(),
-                        pageable.getPageNumber()
+                        pageable.getPageNumber() + 1
                 ),
                 responsePage.getContent()
         );

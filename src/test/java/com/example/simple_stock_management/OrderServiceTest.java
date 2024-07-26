@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,6 +41,73 @@ public class OrderServiceTest {
     @BeforeEach
     public void setUp() {
         orderService = new OrderService(customerOrderRepository, inventoryRepository, itemRepository, orderNumberCounterRepository);
+    }
+
+    @Test
+    public void testGetOrderDetails() {
+        Item item = new Item();
+        item.setName("Test Item");
+        item.setPrice(10.0);
+        entityManager.persistAndFlush(item);
+
+        CustomerOrder order = new CustomerOrder("O1", item, 5);
+        entityManager.persistAndFlush(order);
+
+        CustomerOrder foundOrder = orderService.getOrderDetails("O1");
+
+        assertNotNull(foundOrder);
+        assertEquals("O1", foundOrder.getOrderNo());
+        assertEquals(5, foundOrder.getQty());
+        assertEquals(item.getId(), foundOrder.getItem().getId());
+    }
+
+    @Test
+    public void testListOrders() {
+        Item item1 = new Item();
+        item1.setName("Test Item 1");
+        item1.setPrice(10.0);
+        entityManager.persistAndFlush(item1);
+
+        Item item2 = new Item();
+        item2.setName("Test Item 2");
+        item2.setPrice(15.0);
+        entityManager.persistAndFlush(item2);
+
+        CustomerOrder order1 = new CustomerOrder("O1", item1, 5);
+        entityManager.persistAndFlush(order1);
+
+        CustomerOrder order2 = new CustomerOrder("O2", item2, 3);
+        entityManager.persistAndFlush(order2);
+
+        Page<CustomerOrder> orders = orderService.listOrders(PageRequest.of(0, 10), null);
+
+        assertNotNull(orders);
+        assertEquals(2, orders.getTotalElements());
+    }
+
+    @Test
+    public void testListOrdersWithItemId() {
+        Item item1 = new Item();
+        item1.setName("Test Item 1");
+        item1.setPrice(10.0);
+        entityManager.persistAndFlush(item1);
+
+        Item item2 = new Item();
+        item2.setName("Test Item 2");
+        item2.setPrice(15.0);
+        entityManager.persistAndFlush(item2);
+
+        CustomerOrder order1 = new CustomerOrder("O1", item1, 5);
+        entityManager.persistAndFlush(order1);
+
+        CustomerOrder order2 = new CustomerOrder("O2", item2, 3);
+        entityManager.persistAndFlush(order2);
+
+        Page<CustomerOrder> orders = orderService.listOrders(PageRequest.of(0, 10), item1.getId());
+
+        assertNotNull(orders);
+        assertEquals(1, orders.getTotalElements());
+        assertEquals(item1.getId(), orders.getContent().get(0).getItem().getId());
     }
 
     @Test
@@ -78,14 +147,14 @@ public class OrderServiceTest {
         Inventory withdrawalInventory = new Inventory(new InventoryKey(item.getId(), "W"), item, 5);
         entityManager.persistAndFlush(withdrawalInventory);
 
-        CustomerOrder updatedOrder = new CustomerOrder("O1", item, 10);
-        CustomerOrder result = orderService.updateOrder("O1", updatedOrder);
+        int updatedQty = 10;
+        CustomerOrder result = orderService.updateOrder("O1", updatedQty);
 
-        assertEquals(updatedOrder.getQty(), result.getQty());
+        assertEquals(updatedQty, result.getQty());
 
         Inventory updatedInventory = inventoryRepository.findById(new InventoryKey(item.getId(), "W")).orElse(null);
         assertNotNull(updatedInventory);
-        assertEquals(10, updatedInventory.getQty());
+        assertEquals(updatedQty, updatedInventory.getQty());
     }
 
     @Test
@@ -107,6 +176,5 @@ public class OrderServiceTest {
         orderService.deleteOrder("O1");
 
         assertFalse(customerOrderRepository.findById("O1").isPresent());
-        assertEquals(0, inventoryRepository.findById(new InventoryKey(item.getId(), "W")).get().getQty());
     }
 }

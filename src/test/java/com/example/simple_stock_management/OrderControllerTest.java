@@ -80,12 +80,11 @@ public class OrderControllerTest {
         updatedOrder.setItem(item);
         updatedOrder.setQty(10);
 
-        when(orderService.updateOrder(eq("O1"), any(CustomerOrder.class))).thenReturn(updatedOrder);
-        when(itemRepository.findById(anyInt())).thenReturn(Optional.of(item));
+        when(orderService.updateOrder(eq("O1"), anyInt())).thenReturn(updatedOrder);
 
         mockMvc.perform(put("/orders/O1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"itemId\": 1, \"qty\": 10}"))
+                        .content("{\"qty\": 10}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.orderNo").value("O1"))
                 .andExpect(jsonPath("$.itemId").value(1))
@@ -99,7 +98,7 @@ public class OrderControllerTest {
         when(orderService.listOrders(any(Pageable.class), any())).thenReturn(page);
 
         mockMvc.perform(get("/orders")
-                        .param("page", "0")
+                        .param("page", "1")
                         .param("size", "10")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -107,7 +106,8 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.values[0].orderNo").value("O1"))
                 .andExpect(jsonPath("$.values[0].itemId").value(1))
                 .andExpect(jsonPath("$.values[0].itemName").value("Test Item"))
-                .andExpect(jsonPath("$.values[0].qty").value(5));
+                .andExpect(jsonPath("$.values[0].qty").value(5))
+                .andExpect(jsonPath("$.search.pageAt").value(1));
     }
 
     @Test

@@ -53,11 +53,12 @@ public class ItemControllerTest {
         when(itemService.getItems(any(Pageable.class), eq(null), eq(null), eq(null))).thenReturn(items);
 
         mockMvc.perform(get("/items")
-                        .param("page", "0")
+                        .param("page", "1")
                         .param("size", "10")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.values").isArray());
+                .andExpect(jsonPath("$.values").isArray())
+                .andExpect(jsonPath("$.search.pageAt").value(1));
     }
 
     @Test
@@ -69,7 +70,7 @@ public class ItemControllerTest {
         when(itemService.getItems(any(Pageable.class), eq("Pen"), eq(1.0), eq(2.0))).thenReturn(items);
 
         mockMvc.perform(get("/items")
-                        .param("page", "0")
+                        .param("page", "1")
                         .param("size", "10")
                         .param("name", "Pen")
                         .param("minPrice", "1")
@@ -77,7 +78,8 @@ public class ItemControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.values[0].name").value("Pen"))
-                .andExpect(jsonPath("$.values[0].price").value(1.5));
+                .andExpect(jsonPath("$.values[0].price").value(1.5))
+                .andExpect(jsonPath("$.search.pageAt").value(1));
     }
 
     @Test

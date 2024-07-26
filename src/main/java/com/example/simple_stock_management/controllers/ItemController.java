@@ -9,6 +9,7 @@ import com.example.simple_stock_management.model.Item;
 import com.example.simple_stock_management.services.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,12 +24,14 @@ public class ItemController {
     private ItemService itemService;
 
     @GetMapping
-    public ResponseEntity<?> getItems(Pageable pageable,
+    public ResponseEntity<?> getItems(@RequestParam(defaultValue = "1") int page,
+                                      @RequestParam(defaultValue = "10") int size,
                                       @RequestParam(required = false) String name,
                                       @RequestParam(required = false) Double minPrice,
                                       @RequestParam(required = false) Double maxPrice,
                                       @RequestParam(required = false) Boolean includeStock,
                                       @RequestParam(required = false) Boolean includeOrderHistory) {
+        Pageable pageable = PageRequest.of(page - 1, size);
         Page<Item> items = itemService.getItems(pageable, name, minPrice, maxPrice);
         List<ItemResponse> itemResponses = items.getContent().stream()
                 .map(item -> {
@@ -50,7 +53,7 @@ public class ItemController {
                         items.getTotalElements(),
                         items.getTotalPages(),
                         pageable.getPageSize(),
-                        pageable.getPageNumber()
+                        pageable.getPageNumber() + 1
                 ),
                 itemResponses
         );
