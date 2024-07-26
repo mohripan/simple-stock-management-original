@@ -9,6 +9,7 @@ import com.example.simple_stock_management.model.Item;
 import com.example.simple_stock_management.repository.InventoryRepository;
 import com.example.simple_stock_management.repository.ItemRepository;
 import com.example.simple_stock_management.repository.CustomerOrderRepository;
+import com.example.simple_stock_management.util.SimpleManagementConstant;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -41,7 +42,7 @@ public class ItemService {
     }
 
     public Item getItemById(Integer id) {
-        return itemRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Item not found with id " + id));
+        return itemRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(SimpleManagementConstant.ITEM_NOT_FOUND + " " + id));
     }
 
     public ItemResponse getItemResponseById(Integer id, Boolean includeStock, Boolean includeOrderHistory) {

@@ -7,6 +7,7 @@ import com.example.simple_stock_management.repository.CustomerOrderRepository;
 import com.example.simple_stock_management.repository.InventoryRepository;
 import com.example.simple_stock_management.repository.ItemRepository;
 import com.example.simple_stock_management.repository.OrderNumberCounterRepository;
+import com.example.simple_stock_management.util.SimpleManagementConstant;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -43,7 +44,7 @@ public class OrderService {
     @Transactional
     public CustomerOrder saveOrder(CustomerOrder order) {
         Item item = itemRepository.findById(order.getItem().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Item not found with id " + order.getItem().getId()));
+                .orElseThrow(() -> new ResourceNotFoundException(SimpleManagementConstant.ITEM_NOT_FOUND + " " + order.getItem().getId()));
         order.setItem(item);
 
         validateOrder(order);
@@ -52,7 +53,7 @@ public class OrderService {
 
         int remainingStock = calculateRemainingStock(order.getItem().getId());
         if (remainingStock < order.getQty()) {
-            throw new InsufficientStockException("Item stock is insufficient");
+            throw new InsufficientStockException(SimpleManagementConstant.INSUFFICIENT_STOCK);
         }
 
         CustomerOrder savedOrder = customerOrderRepository.save(order);
@@ -80,7 +81,7 @@ public class OrderService {
         if (qtyDifference > 0) {
             int remainingStock = calculateRemainingStock(existingOrder.getItem().getId());
             if (remainingStock < qtyDifference) {
-                throw new InsufficientStockException("Item stock is insufficient");
+                throw new InsufficientStockException(SimpleManagementConstant.INSUFFICIENT_STOCK);
             }
         }
 
@@ -114,7 +115,7 @@ public class OrderService {
             throw new IllegalArgumentException("Quantity must be greater than 0");
         }
         if (!itemRepository.existsById(order.getItem().getId())) {
-            throw new ResourceNotFoundException("Item not found with id " + order.getItem().getId());
+            throw new ResourceNotFoundException(SimpleManagementConstant.ITEM_NOT_FOUND + " " + order.getItem().getId());
         }
     }
 

@@ -9,6 +9,7 @@ import com.example.simple_stock_management.model.InventoryKey;
 import com.example.simple_stock_management.model.Item;
 import com.example.simple_stock_management.repository.InventoryRepository;
 import com.example.simple_stock_management.repository.ItemRepository;
+import com.example.simple_stock_management.util.SimpleManagementConstant;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,7 +36,7 @@ public class InventoryService {
     }
 
     public Inventory getInventory(InventoryKey id) {
-        return inventoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Inventory not found"));
+        return inventoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(SimpleManagementConstant.INVENTORY_NOT_FOUND));
     }
 
     public Page<Inventory> listInventories(Pageable pageable) {
@@ -45,10 +46,10 @@ public class InventoryService {
     @Transactional
     public Inventory saveInventory(Inventory inventory) {
         if (!itemRepository.existsById(inventory.getId().getItemId())) {
-            throw new ResourceNotFoundException("Item not found with id " + inventory.getId().getItemId());
+            throw new ResourceNotFoundException(SimpleManagementConstant.ITEM_NOT_FOUND + " " + inventory.getId().getItemId());
         }
 
-        Item item = itemRepository.findById(inventory.getId().getItemId()).orElseThrow(() -> new ResourceNotFoundException("Item not found with id " + inventory.getId().getItemId()));
+        Item item = itemRepository.findById(inventory.getId().getItemId()).orElseThrow(() -> new ResourceNotFoundException(SimpleManagementConstant.ITEM_NOT_FOUND + " " + inventory.getId().getItemId()));
 
         Inventory existingInventory = inventoryRepository.findById(inventory.getId()).orElse(null);
         if (existingInventory != null) {
@@ -91,7 +92,7 @@ public class InventoryService {
         int topUp = inventories.stream().filter(i -> i.getId().getType().equals("T")).mapToInt(Inventory::getQty).sum();
         int withdrawal = inventories.stream().filter(i -> i.getId().getType().equals("W")).mapToInt(Inventory::getQty).sum();
         if (withdrawal + withdrawalQty > topUp) {
-            throw new InsufficientStockException("Item stock is insufficient");
+            throw new InsufficientStockException(SimpleManagementConstant.INSUFFICIENT_STOCK);
         }
     }
 
