@@ -6,7 +6,7 @@ public class OrderResponse {
     private String orderNo;
     private Integer itemId;
     private String itemName;
-    private Integer qty;
+    private Integer quantity;
     private Double totalPrice;
 
     public OrderResponse() {
@@ -16,7 +16,7 @@ public class OrderResponse {
         this.orderNo = order.getOrderNo();
         this.itemId = order.getItem().getId();
         this.itemName = order.getItem().getName();
-        this.qty = order.getQty();
+        this.quantity = order.getQty();
         this.totalPrice = order.getQty() * order.getItem().getPrice();
     }
 
@@ -44,12 +44,12 @@ public class OrderResponse {
         this.itemName = itemName;
     }
 
-    public Integer getQty() {
-        return qty;
+    public Integer getQuantity() {
+        return quantity;
     }
 
-    public void setQty(Integer qty) {
-        this.qty = qty;
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 
     public Double getTotalPrice() {
@@ -66,7 +66,7 @@ public class OrderResponse {
                 "orderNo='" + orderNo + '\'' +
                 ", itemId=" + itemId +
                 ", itemName='" + itemName + '\'' +
-                ", qty=" + qty +
+                ", qty=" + quantity +
                 ", totalPrice=" + totalPrice +
                 '}';
     }

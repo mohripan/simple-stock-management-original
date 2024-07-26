@@ -70,7 +70,7 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.orderNo").value("O1"))
                 .andExpect(jsonPath("$.itemId").value(1))
                 .andExpect(jsonPath("$.itemName").value("Test Item"))
-                .andExpect(jsonPath("$.qty").value(5));
+                .andExpect(jsonPath("$.quantity").value(5));
     }
 
     @Test
@@ -89,7 +89,7 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.orderNo").value("O1"))
                 .andExpect(jsonPath("$.itemId").value(1))
                 .andExpect(jsonPath("$.itemName").value("Test Item"))
-                .andExpect(jsonPath("$.qty").value(10));
+                .andExpect(jsonPath("$.quantity").value(10));
     }
 
     @Test
@@ -106,7 +106,7 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.values[0].orderNo").value("O1"))
                 .andExpect(jsonPath("$.values[0].itemId").value(1))
                 .andExpect(jsonPath("$.values[0].itemName").value("Test Item"))
-                .andExpect(jsonPath("$.values[0].qty").value(5))
+                .andExpect(jsonPath("$.values[0].quantity").value(5))
                 .andExpect(jsonPath("$.search.pageAt").value(1));
     }
 
@@ -120,7 +120,7 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.orderNo").value("O1"))
                 .andExpect(jsonPath("$.itemId").value(1))
                 .andExpect(jsonPath("$.itemName").value("Test Item"))
-                .andExpect(jsonPath("$.qty").value(5));
+                .andExpect(jsonPath("$.quantity").value(5));
     }
 
     @Test

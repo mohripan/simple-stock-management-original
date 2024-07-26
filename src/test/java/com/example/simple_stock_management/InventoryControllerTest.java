@@ -73,7 +73,7 @@ public class InventoryControllerTest {
                 .andExpect(jsonPath("$.itemId").value(1))
                 .andExpect(jsonPath("$.remainingStock").value(10))
                 .andExpect(jsonPath("$.types[0].type").value("T"))
-                .andExpect(jsonPath("$.types[0].qty").value(10));
+                .andExpect(jsonPath("$.types[0].quantity").value(10));
     }
 
     @Test
@@ -94,7 +94,7 @@ public class InventoryControllerTest {
                 .andExpect(jsonPath("$.values[0].itemId").value(1))
                 .andExpect(jsonPath("$.values[0].remainingStock").value(10))
                 .andExpect(jsonPath("$.values[0].types[0].type").value("T"))
-                .andExpect(jsonPath("$.values[0].types[0].qty").value(10))
+                .andExpect(jsonPath("$.values[0].types[0].quantity").value(10))
                 .andExpect(jsonPath("$.search.pageAt").value(1));
     }
 
@@ -111,7 +111,7 @@ public class InventoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.itemId").value(1))
                 .andExpect(jsonPath("$.type").value("T"))
-                .andExpect(jsonPath("$.qty").value(10))
+                .andExpect(jsonPath("$.quantity").value(10))
                 .andExpect(jsonPath("$.remainingStock").value(10));
     }
 
@@ -130,7 +130,7 @@ public class InventoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.itemId").value(1))
                 .andExpect(jsonPath("$.type").value("T"))
-                .andExpect(jsonPath("$.qty").value(20))
+                .andExpect(jsonPath("$.quantity").value(20))
                 .andExpect(jsonPath("$.remainingStock").value(10));
     }
 

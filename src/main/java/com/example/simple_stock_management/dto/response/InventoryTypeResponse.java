@@ -2,14 +2,14 @@ package com.example.simple_stock_management.dto.response;
 
 public class InventoryTypeResponse {
     private String type;
-    private Integer qty;
+    private Integer quantity;
 
     public InventoryTypeResponse() {
     }
 
-    public InventoryTypeResponse(String type, Integer qty) {
+    public InventoryTypeResponse(String type, Integer quantity) {
         this.type = type;
-        this.qty = qty;
+        this.quantity = quantity;
     }
 
     public String getType() {
@@ -20,19 +20,19 @@ public class InventoryTypeResponse {
         this.type = type;
     }
 
-    public Integer getQty() {
-        return qty;
+    public Integer getQuantity() {
+        return quantity;
     }
 
-    public void setQty(Integer qty) {
-        this.qty = qty;
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 
     @Override
     public String toString() {
         return "InventoryTypeResponse{" +
                 "type='" + type + '\'' +
-                ", qty=" + qty +
+                ", qty=" + quantity +
                 '}';
     }
 }
